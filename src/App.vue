@@ -64,4 +64,7 @@ export default{
     visibility: visible;
   }
 }
+.text-success{
+	color:#15AC53!important;
+}
 </style>

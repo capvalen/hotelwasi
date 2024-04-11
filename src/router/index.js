@@ -13,6 +13,21 @@ const routes = [
 		component: () => import(/* webpackChunkName: "about" */ '../views/Clientes/HomeClientes.vue')
 	},
 	{
+		path: '/habitaciones',
+		name: 'habitaciones',
+		component: () => import(/* webpackChunkName: "about" */ '../views/Habitaciones/HomeHabitaciones.vue')
+	},
+	{
+		path: '/reservas',
+		name: 'reservas',
+		component: () => import(/* webpackChunkName: "about" */ '../views/Reservas/HomeReservas.vue')
+	},
+	{
+		path: '/caja',
+		name: 'caja',
+		component: () => import(/* webpackChunkName: "about" */ '../views/Caja/HomeCaja.vue')
+	},
+	{
 		path: '/clientes/nuevo',
 		name: 'NuevoCliente',
 		component: () => import(/* webpackChunkName: "about" */ '../views/Clientes/Nuevo.vue')
