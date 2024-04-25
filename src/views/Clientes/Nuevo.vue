@@ -16,7 +16,7 @@
 					<input type="text" class="form-control" autocomplete="off" v-model="cliente.nombres">
 					<label >Dirección</label>
 					<input type="text" class="form-control" autocomplete="off" v-model="cliente.direccion">
-					<label >Celular</label>
+					<label >Celular</label>	
 					<input type="text" class="form-control" autocomplete="off" v-model="cliente.celular">
 					<label >¿Nacionalidad Peruana?</label>
 					<select class="form-select" id="sltNacionalidad" v-model="cliente.idNacionalidad">
@@ -24,7 +24,9 @@
 						<option value="0">No</option>
 					</select>
 					<label for="">Procedencia</label>
-					<input type="text" class="form-control" autocomplete="off" v-model="cliente.procedencia">
+					<select class="form-select" id="sltDepartamentos">
+						<option v-for="departamento in departamentos" :value="departamento.id">{{ departamento.departamento }}</option>
+					</select>
 					<label for="">Dato extra</label>
 					<input type="text" class="form-control" autocomplete="off" v-model="cliente.observaciones">
 					<button class="btn btn-outline-primary mt-3" @click="guardar()"><i class="bi bi-asterisk"></i> Crear cliente</button>
@@ -38,9 +40,21 @@ export default{
 	data(){ return {
 		cliente:{
 			dni:'', apellidos:'', nombres:'', direccion:'', celular:'', idNacionalidad:1, procedencia:1, observaciones:''
-		}
+		}, departamentos:[]
 	}},
+	mounted() {
+		this.cargarDatos();
+	},
 	methods: {
+		async cargarDatos(){
+			let datos = new FormData()
+			datos.append('pedir', 'listar');
+			let servDepartamentos = await fetch(this.servidor+'Departamentos.php',{
+				method:'POST', body: datos
+			})
+			const tempDepartamentos = await servDepartamentos.json()
+			this.departamentos = tempDepartamentos.departamentos
+		},
 		guardar(){
 			if( this.cliente.dni =='' || this.cliente.dni.length<8 )
 				alert('Debe ingresar un DNI obligatorio')
@@ -50,14 +64,13 @@ export default{
 				let datos = new FormData()
 				datos.append('pedir', 'crear')
 				datos.append('cliente', JSON.stringify(this.cliente))
-				this.axios.post(this.servidor + 'Cliente.php', datos)
+				this.axios.post(this.servidor + 'Clientes.php', datos)
 				.then(res =>{
 					if (res.data.id){
 						alertify.message('Guardado exitoso', 10);
-						//this.limpiar()
+						this.$router.push({ name: 'clientes'});  //, params:{dniPadre: dni }
 					}
 				})
-				
 			}
 		}
 	},
