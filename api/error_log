@@ -1,42 +1,24 @@
-[25-Apr-2024 02:26:49 UTC] PHP Warning:  Undefined array key "cliente" in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php on line 21
-[25-Apr-2024 02:26:49 UTC] PHP Deprecated:  json_decode(): Passing null to parameter #1 ($json) of type string is deprecated in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php on line 21
-[25-Apr-2024 02:26:49 UTC] PHP Warning:  Trying to access array offset on value of type null in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php on line 26
-[25-Apr-2024 02:26:49 UTC] PHP Warning:  Trying to access array offset on value of type null in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php on line 26
-[25-Apr-2024 02:26:49 UTC] PHP Warning:  Trying to access array offset on value of type null in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php on line 26
-[25-Apr-2024 02:26:49 UTC] PHP Warning:  Trying to access array offset on value of type null in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php on line 26
-[25-Apr-2024 02:26:49 UTC] PHP Warning:  Trying to access array offset on value of type null in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php on line 26
-[25-Apr-2024 02:26:49 UTC] PHP Warning:  Trying to access array offset on value of type null in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php on line 27
-[25-Apr-2024 02:26:49 UTC] PHP Warning:  Trying to access array offset on value of type null in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php on line 27
-[25-Apr-2024 02:26:49 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 3 in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php:27
+[27-Apr-2024 23:49:09 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php:130
 Stack trace:
-#0 /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php(27): PDOStatement->execute(Array)
-#1 /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php(6): crear(Object(PDO))
+#0 /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php(130): PDOStatement->execute(Array)
+#1 /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php(8): registrar(Object(PDO))
 #2 {main}
-  thrown in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php on line 27
-[25-Apr-2024 02:28:17 UTC] PHP Warning:  Undefined array key "cliente" in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php on line 21
-[25-Apr-2024 02:28:17 UTC] PHP Deprecated:  json_decode(): Passing null to parameter #1 ($json) of type string is deprecated in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php on line 21
-[25-Apr-2024 02:28:17 UTC] PHP Warning:  Trying to access array offset on value of type null in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php on line 26
-[25-Apr-2024 02:28:17 UTC] PHP Warning:  Trying to access array offset on value of type null in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php on line 26
-[25-Apr-2024 02:28:17 UTC] PHP Warning:  Trying to access array offset on value of type null in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php on line 26
-[25-Apr-2024 02:28:17 UTC] PHP Warning:  Trying to access array offset on value of type null in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php on line 26
-[25-Apr-2024 02:28:17 UTC] PHP Warning:  Trying to access array offset on value of type null in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php on line 26
-[25-Apr-2024 02:28:17 UTC] PHP Warning:  Trying to access array offset on value of type null in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php on line 27
-[25-Apr-2024 02:28:17 UTC] PHP Warning:  Trying to access array offset on value of type null in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php on line 27
-[25-Apr-2024 02:28:17 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 3 in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php:27
+  thrown in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php on line 130
+[27-Apr-2024 23:49:31 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[HY093]: Invalid parameter number: number of bound variables does not match number of tokens in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php:130
 Stack trace:
-#0 /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php(27): PDOStatement->execute(Array)
-#1 /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php(6): crear(Object(PDO))
+#0 /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php(130): PDOStatement->execute(Array)
+#1 /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php(8): registrar(Object(PDO))
 #2 {main}
-  thrown in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php on line 27
-[25-Apr-2024 02:28:54 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 5 in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php:29
+  thrown in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php on line 130
+[28-Apr-2024 00:39:47 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'salida' in 'where clause' in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Reservas.php:84
 Stack trace:
-#0 /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php(29): PDOStatement->execute(Array)
-#1 /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php(6): crear(Object(PDO))
+#0 /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Reservas.php(84): PDOStatement->execute(Array)
+#1 /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Reservas.php(6): verificarHorario(Object(PDO))
 #2 {main}
-  thrown in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php on line 29
-[25-Apr-2024 02:29:59 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42000]: Syntax error or access violation: 1064 You have an error in your SQL syntax; check the manual that corresponds to your MariaDB server version for the right syntax to use near '' at line 5 in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php:29
+  thrown in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Reservas.php on line 84
+[28-Apr-2024 00:40:07 UTC] PHP Fatal error:  Uncaught PDOException: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'salida' in 'where clause' in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Reservas.php:84
 Stack trace:
-#0 /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php(29): PDOStatement->execute(Array)
-#1 /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php(6): crear(Object(PDO))
+#0 /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Reservas.php(84): PDOStatement->execute(Array)
+#1 /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Reservas.php(6): verificarHorario(Object(PDO))
 #2 {main}
-  thrown in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Habitaciones.php on line 29
+  thrown in /home/fcxnhnvn/public_html/WEBS/tambowasi.com/intranet/api/Reservas.php on line 84

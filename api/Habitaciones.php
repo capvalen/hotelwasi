@@ -5,6 +5,7 @@ switch($_POST['pedir']){
 	case 'basicos': basicos($datab); break;
 	case 'crear': crear($datab); break;
 	case 'solicitar': solicitar($datab); break;
+	case 'detalleHabitacion': detalleHabitacion($datab); break;
 	
 }
 
@@ -53,5 +54,18 @@ function solicitar($db){
 			}
 		}
 		echo json_encode( array('habitaciones' => $filas, 'pisos' => $pisos, 'mensaje' => 'ok'));
+	}
+}
+
+function detalleHabitacion($db){
+	$filas = [];
+	$sql = $db->prepare("SELECT h.*, th.habitacion as tipoCuarto, e.estado as estadoCuarto  FROM `habitaciones` h
+	inner join estadoHabitacion e on e.id = h.estado
+	inner join tipoHabitacion th on th.id = h.tipo
+	where h.activo = 1 and h.id  = ?");
+	if($sql->execute([ $_POST['idHabitacion'] ])){
+		$filas = $sql->fetch(PDO::FETCH_ASSOC);
+
+		echo json_encode( array('habitacion' => $filas, 'mensaje' => 'ok'));
 	}
 }

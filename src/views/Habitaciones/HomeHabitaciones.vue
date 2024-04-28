@@ -17,7 +17,7 @@
 					<p class="fw-bold mb-0">{{ piso[0].nivel }}° Nivel</p>
 				</div>
 			</div>
-			<div class="row row-cols-2 row-cols-md-5 row-cols-lg-6">
+			<div class="row row-cols-2 row-cols-md-4 row-cols-lg-6">
 				<div class="col my-2 text-decoration-none" v-for="(habitacion, index) in piso" v-show="habitacion.tipo==verFiltro || verFiltro==-1">
 				
 					<div class="card card-body" @click="modalQueHacer(index, piso[0].nivel)" >
@@ -68,37 +68,40 @@
 				</div>
 				<div class="modal-body">
 					<div class="row row-cols-3">
-						<div class="col d-grid ">
-							<button class="btn btn-outline-light" v-if="selecccionado.estado==1">
+						<div class="col d-grid my-1" v-if="[2, 4].includes(selecccionado.estado)">
+							<button class="btn btn-outline-light" >
+								<img src="@/assets/bed.png" style="width: 32px;">
+								<p class="mb-0 text-secondary">Detalle de alquiler</p>
+							</button>
+						</div>
+						<div class="col d-grid  my-1">
+							<button class="btn btn-outline-light" v-if="selecccionado.estado==1" @click="irA('inmediato')">
 								<img src="@/assets/bussy.png" style="width: 32px;">
-								<p class="mb-0 text-danger">Uso de inmediato</p>
+								<p class="mb-0 text-danger">Uso inmediato</p>
 							</button>
 							<button class="btn btn-outline-light" v-if="selecccionado.estado==2 || selecccionado.estado==3">
 								<img src="@/assets/free.png" style="width: 32px;">
 								<p class="mb-0 text-success">Liberar</p>
 							</button>
 						</div>
-						<div class="col d-grid">
+						<div class="col d-grid my-1">
 							<button class="btn btn-outline-light">
 								<img src="@/assets/cleanning.png" style="width: 32px;">
 								<p class="mb-0 text-primary">Iniciar limpieza</p>
 							</button>
 						</div>
-						<div class="col d-grid">
+						<div class="col d-grid my-1">
 							<button class="btn btn-outline-light">
 								<img src="@/assets/reserved.png" style="width: 32px;">
 								<p class="mb-0 text-warning">Reservar</p>
 							</button>
 						</div>
-					</div>
-					<div class="row row-cols-3 mt-2">
-						<div class="col offset-4">
+						<div class="col my-1">
 							<button class="btn btn-outline-light">
-								<img src="@/assets/bed.png" style="width: 32px;">
-								<p class="mb-0 text-secondary">Editar habitación</p>
+								<img src="@/assets/edit.png" style="width: 32px;">
+								<p class="mb-0 text-purple">Editar habitación</p>
 							</button>
 						</div>
-
 					</div>
 				</div>
 			</div>
@@ -158,7 +161,17 @@ export default{
 			this.selecccionado = this.habitacionesPorPiso[nivel][index]
 			const modalQueHacer = new bootstrap.Modal(document.getElementById('modalQueHacer'))
 			modalQueHacer.show();
-
+		},
+		irA(tipo){
+			let close = document.querySelector('#modalQueHacer .btn-close')
+			close.click()
+			
+			switch (tipo) {
+				case 'inmediato': this.$router.push({ name: 'registrarHabitacion', params:{idHabitacion: this.selecccionado.id }});
+					break;
+				default:
+					break;
+			}
 		}
 	},
 }
@@ -176,5 +189,8 @@ export default{
 }
 #pDescripcion{
 	font-size:0.7rem;
+}
+.text-purple{
+	color: #4400aa;
 }
 </style>

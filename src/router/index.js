@@ -18,9 +18,9 @@ const routes = [
 		component: () => import(/* webpackChunkName: "about" */ '../views/Habitaciones/HomeHabitaciones.vue')
 	},
 	{
-		path: '/reservas',
-		name: 'reservas',
-		component: () => import(/* webpackChunkName: "about" */ '../views/Reservas/HomeReservas.vue')
+		path: '/habitacion/registrar/:idHabitacion',
+		name: 'registrarHabitacion',
+		component: () => import(/* webpackChunkName: "about" */ '../views/Reservas/Reservaciones.vue')
 	},
 	{
 		path: '/caja',
