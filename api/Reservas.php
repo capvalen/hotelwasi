@@ -45,7 +45,7 @@ function registrar($db){
 	}
 	
 	//Revisamos por ultima vez si la habitacion esta reservada en la fecha elegida
-	$sqlComprobar = $db->prepare("SELECT * from registro where idHabitacion =? and ? between entrada and salida and activo = 1;");
+	$sqlComprobar = $db->prepare("SELECT * from registro where idHabitacion =? and ? between entrada and salida and activo = 1 and estado in (2,4);");
 	$sqlComprobar ->execute([
 		$reserva['idHabitacion'], $reserva['inicio'].' '.$reserva['horaInicio']
 	]);
@@ -65,11 +65,12 @@ function registrar($db){
 
 		$sqlHabitacion = $db->prepare("UPDATE habitaciones set estado = 2 where id = ?;");
 		$sqlHabitacion->execute([ $reserva['idHabitacion'] ]);
+
 		$sqlRegistro = $db->prepare("INSERT INTO registro (
-			`idReserva`, `idCliente`, `entrada`, `salida`, `idHabitacion`, `tipoAtencion`) values
-			(?, ?, ?, ?, ?, ?);");
+			`idReserva`, `idCliente`, `entrada`, `salida`, `estado`,`idHabitacion`, `tipoAtencion`, `tipoReserva`) values
+			(?, ?, ?, ?, 2, ?, ?, ?);");
 		$sqlRegistro -> execute([
-			$idReserva, $idCliente, $reserva['inicio'] .' '.$reserva['horaInicio'], $reserva['fin'] .' '.$reserva['horaFin'], $reserva['idHabitacion'], $reserva['tipoAtencion']
+			$idReserva, $idCliente, $reserva['inicio'] .' '.$reserva['horaInicio'], $reserva['fin'] .' '.$reserva['horaFin'], $reserva['idHabitacion'], $reserva['tipoAtencion'], $reserva['tipoReserva']
 		]);
 		echo json_encode( array('cliente' => $idCliente, 'reserva' => $idReserva, 'duplicado' => false ));
 	}else
@@ -79,7 +80,7 @@ function registrar($db){
 function verificarHorario($db){
 	$reserva = json_decode($_POST['reserva'], true);
 
-	$sqlComprobar = $db->prepare("SELECT * from registro where idHabitacion =? and ? between entrada and salida and activo = 1 order by id desc limit 1;");
+	$sqlComprobar = $db->prepare("SELECT * from registro where idHabitacion =? and ? between entrada and salida and activo = 1 and estado in (2, 4) order by id desc limit 1;");
 	$sqlComprobar ->execute([
 		$reserva['idHabitacion'], $reserva['inicio'].' '.$reserva['horaInicio']
 	]);

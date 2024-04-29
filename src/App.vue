@@ -38,6 +38,9 @@ export default{
       botonActivo: null
     };
   },
+	mounted(){
+		localStorage.setItem('idUsuario', 1)
+	},
   methods: {
     activarBoton(boton) {
       this.botonActivo = boton;

@@ -23,6 +23,16 @@ const routes = [
 		component: () => import(/* webpackChunkName: "about" */ '../views/Reservas/Reservaciones.vue')
 	},
 	{
+		path: '/habitacion/reservar/:idHabitacion',
+		name: 'reservarHabitacion',
+		component: () => import(/* webpackChunkName: "about" */ '../views/Reservas/Reservaciones.vue')
+	},
+	{
+		path: '/habitacion/detalle/:idHabitacion',
+		name: 'detalleHabitacion',
+		component: () => import(/* webpackChunkName: "about" */ '../views/Habitaciones/DetalleHabitacion.vue')
+	},
+	{
 		path: '/caja',
 		name: 'caja',
 		component: () => import(/* webpackChunkName: "about" */ '../views/Caja/HomeCaja.vue')

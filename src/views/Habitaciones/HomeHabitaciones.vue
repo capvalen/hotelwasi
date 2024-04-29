@@ -9,6 +9,7 @@
 				<button type="button" class="btn btn-outline-primary btnFiltro" @click="filtrar(verFiltro=tipo.id, $event)" v-for="tipo in tipos">{{tipo.habitacion}}</button>
 			</div>
 			<button class="btn btn-outline-warning ms-3" data-bs-toggle="modal" data-bs-target="#modalNuevo"><i class="bi bi-asterisk"></i> Nueva habitación</button>
+			<button class="btn btn-outline-secondary ms-3" @click="actualizar()"><i class="bi bi-arrow-clockwise"></i> Actualizar</button>
 		</div>
 
 		<div class=""  v-for="piso in habitacionesPorPiso">
@@ -69,29 +70,25 @@
 				<div class="modal-body">
 					<div class="row row-cols-3">
 						<div class="col d-grid my-1" v-if="[2, 4].includes(selecccionado.estado)">
-							<button class="btn btn-outline-light" >
+							<button class="btn btn-outline-light" @click="irA('detalleHabitacion')">
 								<img src="@/assets/bed.png" style="width: 32px;">
 								<p class="mb-0 text-secondary">Detalle de alquiler</p>
 							</button>
 						</div>
-						<div class="col d-grid  my-1">
-							<button class="btn btn-outline-light" v-if="selecccionado.estado==1" @click="irA('inmediato')">
+						<div class="col d-grid  my-1" v-if="selecccionado.estado==1" @click="irA('inmediato')">
+							<button class="btn btn-outline-light" >
 								<img src="@/assets/bussy.png" style="width: 32px;">
 								<p class="mb-0 text-danger">Uso inmediato</p>
 							</button>
-							<button class="btn btn-outline-light" v-if="selecccionado.estado==2 || selecccionado.estado==3">
-								<img src="@/assets/free.png" style="width: 32px;">
-								<p class="mb-0 text-success">Liberar</p>
-							</button>
 						</div>
-						<div class="col d-grid my-1">
+						<div class="col d-grid my-1" v-if="selecccionado.estado==3" @click="liberarLimpieza()" data-bs-dismiss="modal">
 							<button class="btn btn-outline-light">
 								<img src="@/assets/cleanning.png" style="width: 32px;">
-								<p class="mb-0 text-primary">Iniciar limpieza</p>
+								<p class="mb-0 text-primary">Finalizar limpieza</p>
 							</button>
 						</div>
 						<div class="col d-grid my-1">
-							<button class="btn btn-outline-light">
+							<button class="btn btn-outline-light" @click="irA('reservar')">
 								<img src="@/assets/reserved.png" style="width: 32px;">
 								<p class="mb-0 text-warning">Reservar</p>
 							</button>
@@ -124,6 +121,7 @@ export default{
 	},
 	methods: {
 		async actualizar(){
+			this.habitacionesPorPiso={};
 			let datos = new FormData()
 			datos.append('pedir', 'solicitar');
 			let serv = await fetch(this.servidor+'Habitaciones.php',{
@@ -167,30 +165,46 @@ export default{
 			close.click()
 			
 			switch (tipo) {
-				case 'inmediato': this.$router.push({ name: 'registrarHabitacion', params:{idHabitacion: this.selecccionado.id }});
-					break;
-				default:
-					break;
+				case 'inmediato': this.$router.push({ name: 'registrarHabitacion', params:{idHabitacion: this.selecccionado.id }}); break;
+				case 'detalleHabitacion': this.$router.push({ name: 'detalleHabitacion', params:{idHabitacion: this.selecccionado.id }}); break;
+				case 'reservar': this.$router.push({ name: 'reservarHabitacion', params:{idHabitacion: this.selecccionado.id }}); break;
+				default: break;
 			}
+		},
+		liberarLimpieza(){
+			let datos = new FormData()
+			datos.append('pedir', 'liberarLimpieza');
+			datos.append('idHabitacion', this.selecccionado.id);
+			fetch(this.servidor+'Habitaciones.php',{
+				method:'POST', body: datos
+			}).then(serv => serv.text() )
+			.then(resp => {
+				if(resp == 'ok'){
+					alertify.message('Actualizado con éxito')
+				}else{
+					alertify.error('Hubo un error actualizando')
+				}
+				this.actualizar()
+			})
 		}
 	},
 }
 </script>
 
 <style scoped>
-.card{
-	color:black
-}
-.card:hover{
-	font-weight: bold;
-	box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-	cursor:pointer;
-	color:black
-}
-#pDescripcion{
-	font-size:0.7rem;
-}
-.text-purple{
-	color: #4400aa;
-}
+	.card{
+		color:black
+	}
+	.card:hover{
+		font-weight: bold;
+		box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+		cursor:pointer;
+		color:black
+	}
+	#pDescripcion{
+		font-size:0.7rem;
+	}
+	.text-purple{
+		color: #4400aa;
+	}
 </style>

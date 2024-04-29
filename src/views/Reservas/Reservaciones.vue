@@ -1,5 +1,6 @@
 <template>
-	<h1>Reservaciones</h1>
+	<h1 v-if="reserva.tipoReserva==1">Registro inmediato</h1>
+	<h1 v-else>Reservación</h1>
 	<div class="row mb-2">
 		<div class="col">
 			<router-link to="/habitaciones" class="btn btn-outline-primary border-0"><i class="bi bi-arrow-bar-left"></i> Ver habitaciones</router-link>
@@ -37,16 +38,16 @@
 						<h5 class="card-title ">Detalle de la reserva</h5>
 						<div class="row row-cols-md-2">
 							<div class="col">
-								<label for="">Fecha de inicio</label>
+								<label for="">Fecha de entrada</label>
 								<input type="date" class="form-control" v-model="reserva.inicio" @change="verificarHorario()" :min="hoy">
 							</div>
 							<div class="col">
-								<label for="">Hora de inicio</label>
+								<label for="">Hora de entrada</label>
 								<input type="time" class="form-control" v-model="reserva.horaInicio" @change="verificarHorario()">
 							</div>
 							<div class="col">
 								<label for="">Fecha de salida</label>
-								<input type="date" class="form-control" v-model="reserva.fin" @change="verificarHorario()">
+								<input type="date" class="form-control" v-model="reserva.fin" @change="verificarHorario()" :min="hoy">
 							</div>
 							<div class="col">
 								<label for="">Hora de salida</label>
@@ -61,7 +62,7 @@
 								</select>
 							</div>
 							<div class="col">
-								<label for=""><strong>A pagar:</strong></label>
+								<label for=""><strong>Precio de la habitación:</strong></label>
 								<p>S/ {{parseFloat(reserva.parcial).toFixed(2)}}</p>
 							</div>
 							<div class="col">
@@ -162,6 +163,8 @@ export default{
 	},
 	methods: {
 		async cargarDatos(){
+			if(this.$route.name == 'registrarHabitacion') this.reserva.tipoReserva=1
+			else this.reserva.tipoReserva=2
 			let datos = new FormData()
 			datos.append('pedir', 'detalleHabitacion');
 			datos.append('idHabitacion', this.$route.params.idHabitacion);
@@ -223,9 +226,11 @@ export default{
 			const respuesta = await serv.json()
 			if(!respuesta.duplicado){
 				alertify.message(`Habitación ${this.habitacion.numero} tomada con éxito`)
-				this.$router.push('/habitaciones')
-			}else
+				this.$router.push({name: 'detalleHabitacion', params:{ idHabitacion: this.habitacion.id }} )
+			}else{
+				this.$router.push({name: 'registrarHabitacion', params:{idHabitacion: this.selecccionado.id }});
 				alertify.error('La habitación ya está reservada en ese horario, inténtelo de nuevo')
+			}
 		},
 		async buscarDNI(){
 			let datos = new FormData()
