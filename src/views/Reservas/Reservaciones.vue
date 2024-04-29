@@ -150,7 +150,7 @@ export default{
 		habitacion:[], departamentos:[], activarDepartamento:true, reservado:{cliente:[]}, fechaAnterior:false, hoy: moment().format('YYYY-MM-DD'),
 		reserva:{
 			inicio: moment().format('YYYY-MM-DD'), horaInicio: moment().format('HH:mm'),
-			fin: moment().format('YYYY-MM-DD'), horaFin: moment().add(3, 'hours').format('HH:mm'), tipoAtencion:7, tipoReserva:1, idHabitacion: this.$route.params.idHabitacion,
+			fin: moment().format('YYYY-MM-DD'), horaFin: moment().add(3, 'hours').format('HH:mm'), tipoAtencion:7, tipoReserva:1, idHabitacion: this.$route.params.idHabitacion, estado:1,
 			adelanto:0, pagar:0, parcial:0, precioAcordado:1,
 			cliente:{
 				id:1, dni: '00000000', nombres: 'Cliente simple', apellidos:'-', idNacionalidad:1, procedencia:1, direccion:'', celular:'', correo:'', observaciones:''
@@ -163,8 +163,17 @@ export default{
 	},
 	methods: {
 		async cargarDatos(){
-			if(this.$route.name == 'registrarHabitacion') this.reserva.tipoReserva=1
-			else this.reserva.tipoReserva=2
+			if(this.$route.name == 'registrarHabitacion'){ //inmediato
+				this.reserva.tipoReserva=1
+				this.reserva.estado = 2
+				this.reserva.tipoAtencion = 7
+			}
+			else{ //reservación
+				this.reserva.tipoReserva=2
+				this.reserva.estado = 1
+				this.reserva.tipoAtencion = 2
+
+			}
 			let datos = new FormData()
 			datos.append('pedir', 'detalleHabitacion');
 			datos.append('idHabitacion', this.$route.params.idHabitacion);
@@ -226,7 +235,10 @@ export default{
 			const respuesta = await serv.json()
 			if(!respuesta.duplicado){
 				alertify.message(`Habitación ${this.habitacion.numero} tomada con éxito`)
-				this.$router.push({name: 'detalleHabitacion', params:{ idHabitacion: this.habitacion.id }} )
+				if(this.reserva.tipoReserva==1)
+					this.$router.push({name: 'detalleHabitacion', params:{ idHabitacion: this.habitacion.id }} )
+				else
+					this.$router.push({name: 'detalleReserva', params:{ idReserva: respuesta.reserva }} )
 			}else{
 				this.$router.push({name: 'registrarHabitacion', params:{idHabitacion: this.selecccionado.id }});
 				alertify.error('La habitación ya está reservada en ese horario, inténtelo de nuevo')
@@ -265,7 +277,7 @@ export default{
 			
 			if(diferencia <0 ){
 				this.fechaAnterior = true
-				alertify.error('No se aceptan fechas anteriores')
+				alertify.error('No se aceptan fechas anteriores', 3)
 			}else{
 				this.fechaAnterior=false
 				if(!this.reserva.inicio || !this.reserva.horaInicio || !this.reserva.fin || !this.reserva.horaFin )
@@ -279,7 +291,7 @@ export default{
 					})
 					const respuesta = await serv.json()
 					if( respuesta.reserva == 'libre'){
-						alertify.message('Horario libre', 3)
+						//alertify.message('Horario libre', 3)
 						this.reservado  = []
 					}
 					else{

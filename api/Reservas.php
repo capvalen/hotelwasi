@@ -4,6 +4,7 @@ include 'conectkarl.php';
 switch($_POST['pedir']){
 	case 'registrar': registrar($datab); break;
 	case 'verificarHorario': verificarHorario($datab); break;
+	case 'tomarHabitacion': tomarHabitacion($datab); break;
 }
 
 function registrar($db){
@@ -53,25 +54,28 @@ function registrar($db){
 
 		$sqlReserva = $db->prepare("INSERT INTO `reservas`(
 			`idCliente`, `fechaInicio`, `fechaFin`, `idHabitacion`, `precio`, 
-			`adelanto`, `pagar`, `tipoAtencion`, `tipoReserva`) VALUES
+			`adelanto`, `pagar`, `tipoAtencion`, `tipoReserva`, `estado`) VALUES
 				(?, ?, ?, ?, ?,
-				?, ?, ?, ?);");
+				?, ?, ?, ?, ?);");
 		$sqlReserva->execute([
 			$idCliente, $reserva['inicio'].' '.$reserva['horaInicio'], $reserva['fin'].' '.$reserva['horaFin'], $reserva['idHabitacion'], $reserva['parcial'],
-			$reserva['adelanto'], $reserva['pagar'], $reserva['tipoAtencion'], $reserva['tipoReserva'],
+			$reserva['adelanto'], $reserva['pagar'], $reserva['tipoAtencion'], $reserva['tipoReserva'], $reserva['estado'],
 		]);
 		$idReserva = $db->lastInsertId();
 		//echo $sqlReserva->debugDumpParams();
 
-		$sqlHabitacion = $db->prepare("UPDATE habitaciones set estado = 2 where id = ?;");
-		$sqlHabitacion->execute([ $reserva['idHabitacion'] ]);
+		if($reserva['estado']=='2'){
+			$sqlHabitacion = $db->prepare("UPDATE habitaciones set estado = ? where id = ?;");
+			$sqlHabitacion->execute([ $reserva['estado'], $reserva['idHabitacion'] ]);
+	
+			$sqlRegistro = $db->prepare("INSERT INTO registro (
+				`idReserva`, `idCliente`, `entrada`, `salida`, `estado`,`idHabitacion`, `tipoAtencion`, `tipoReserva`) values
+				(?, ?, ?, ?, ?, ?, ?, ?);");
+			$sqlRegistro -> execute([
+				$idReserva, $idCliente, $reserva['inicio'] .' '.$reserva['horaInicio'], $reserva['fin'] .' '.$reserva['horaFin'], $reserva['estado'], $reserva['idHabitacion'], $reserva['tipoAtencion'], $reserva['tipoReserva']
+			]);
+		}
 
-		$sqlRegistro = $db->prepare("INSERT INTO registro (
-			`idReserva`, `idCliente`, `entrada`, `salida`, `estado`,`idHabitacion`, `tipoAtencion`, `tipoReserva`) values
-			(?, ?, ?, ?, 2, ?, ?, ?);");
-		$sqlRegistro -> execute([
-			$idReserva, $idCliente, $reserva['inicio'] .' '.$reserva['horaInicio'], $reserva['fin'] .' '.$reserva['horaFin'], $reserva['idHabitacion'], $reserva['tipoAtencion'], $reserva['tipoReserva']
-		]);
 		echo json_encode( array('cliente' => $idCliente, 'reserva' => $idReserva, 'duplicado' => false ));
 	}else
 		echo json_encode( array('cliente' => $idCliente, 'duplicado' => true ));
@@ -93,4 +97,23 @@ function verificarHorario($db){
 		$cliente = $sqlCliente->fetch(PDO::FETCH_ASSOC);
 		echo json_encode( array('reserva' => 'ocupado', 'cliente' => $cliente, 'ocupado'=> $rowComprobar ));
 	}
+}
+
+function tomarHabitacion($db){
+	$sql = $db->prepare("UPDATE reservas set estado = 2, tipoReserva = 1 where id = ?;");
+	$sql->execute([ $_POST['idReserva'] ]);
+
+	$sqlRegistro = $db->prepare("INSERT INTO registro (
+		`idReserva`, `idCliente`, `entrada`, `salida`, `estado`,
+		`idHabitacion`, `tipoAtencion`, `tipoReserva`) values
+		(?, ?, ?, ?, 2,
+		?, 2, 2);");
+	$sqlRegistro -> execute([
+		$_POST['idReserva'], $_POST['idCliente'], $_POST['entrada'], $_POST['salida'],
+		$_POST['idHabitacion']
+	]);
+
+	$sqlHabitacion = $db->prepare("UPDATE habitaciones set estado = 2 where id = ?;");
+	$sqlHabitacion->execute([ $_POST['idHabitacion'] ]);
+	echo json_encode( array('reserva' => 'ocupado'));
 }

@@ -32,11 +32,15 @@ const routes = [
 		name: 'detalleHabitacion',
 		component: () => import(/* webpackChunkName: "about" */ '../views/Habitaciones/DetalleHabitacion.vue')
 	},
-
 	{
 		path: '/habitacion/editar/:idHabitacion',
 		name: 'editarHabitacion',
 		component: () => import(/* webpackChunkName: "about" */ '../views/Habitaciones/EditarHabitacion.vue')
+	},
+	{
+		path: '/reserva/ver/:idReserva',
+		name: 'detalleReserva',
+		component: () => import(/* webpackChunkName: "about" */ '../views/Habitaciones/DetalleHabitacion.vue')
 	},
 	{
 		path: '/caja',

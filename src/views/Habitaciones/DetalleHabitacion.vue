@@ -1,5 +1,6 @@
 <template>
-	<h1>Detalle de la Reservación</h1>
+	<h1 v-if="$route.name == 'detalleReserva'">Detalle de la Reservación</h1>
+	<h1 v-else>Reservación inmediata</h1>
 	<div class="row mb-2">
 		<div class="col">
 			<router-link to="/habitaciones" class="btn btn-outline-primary border-0"><i class="bi bi-arrow-bar-left"></i> Ver habitaciones</router-link>
@@ -84,12 +85,13 @@
 					</div>
 				</div>
 				
-				<CestaProductos :productos="cesta" @buscarProducto="buscarProducto" @actualizarPrecioProductos="actualizarPrecioProductos"></CestaProductos>
+				<CestaProductos v-if="$route.name == 'detalleHabitacion'" :productos="cesta" @buscarProducto="buscarProducto" @actualizarPrecioProductos="actualizarPrecioProductos"></CestaProductos>
 			</div>
 
 			<div class="row my-3">
 				<div class="col-6 d-grid mx-auto">
-					<button class="btn btn-outline-primary btn-lg" @click="cobrar()"><i class="bi bi-asterisk"></i> Cobrar servicio</button>
+					<button v-if="$route.name == 'detalleHabitacion'" class="btn btn-outline-primary btn-lg" @click="cobrar()"><i class="bi bi-asterisk"></i> Cobrar servicio</button>
+					<button v-else class="btn btn-outline-success btn-lg" @click="habilitar()"><i class="bi bi-check2-square"></i> Habilitar servicio</button>
 				</div>
 			</div>
 	</div>
@@ -114,11 +116,18 @@ export default{
 	methods: {
 		async cargarDatos(){
 			let datos = new FormData()
-			datos.append('pedir', 'detalleOcupado');
-			datos.append('idHabitacion', this.$route.params.idHabitacion);
+			if(this.$route.name == 'detalleReserva'){
+				datos.append('pedir', 'detalleReserva');
+				datos.append('idReserva', this.$route.params.idReserva);
+			}
+			else{
+				datos.append('pedir', 'detalleOcupado');
+				datos.append('idHabitacion', this.$route.params.idHabitacion);
+			}
 			let serv = await fetch(this.servidor+'Habitaciones.php',{
 				method:'POST', body: datos
-			})
+			}) 
+			
 			const temp = await serv.json()
 			this.habitacion = temp.habitacion
 			this.reserva.id = this.habitacion.id
@@ -190,7 +199,36 @@ export default{
 					alertify.error('Hubo un error')
 				}
 			})
-
+		},
+		habilitar(){
+			let that = this
+			alertify.confirm('Habilitar servicio','¿Desea habilitar el alquiler de la habitación?',
+				function(){ 
+					that.tomar()
+				},
+				function(){ console.log('no') }
+			);
+		},
+		tomar(){
+			let pendiente = this.habitacion.precio + this.habitacion.productos
+			let datos = new FormData()
+			datos.append('pedir', 'tomarHabitacion');
+			datos.append('idReserva', this.reserva.id);
+			datos.append('idHabitacion', this.habitacion.idHabitacion);
+			datos.append('idCliente', this.habitacion.idCliente);
+			datos.append('entrada', this.habitacion.fechaInicio);
+			datos.append('salida', this.habitacion.fechaFin);
+			fetch(this.servidor+'Reservas.php',{
+				method:'POST', body: datos
+			}).then(serv=> serv.json())
+			.then(resp =>{
+				if(resp.reserva=='ocupado'){
+					this.$router.push({name: 'detalleHabitacion', params:{idHabitacion: this.habitacion.idHabitacion}})
+					alertify.message('Se registró la reserva.')
+				}else{
+					alertify.error('Hubo un error')
+				}
+			})
 		}
 	},
 }

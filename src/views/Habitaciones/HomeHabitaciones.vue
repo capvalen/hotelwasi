@@ -31,28 +31,29 @@
 							<div class="col-12 col-md-8">
 								<p class="fw-bold mb-0" :class="
 								{
-									'text-success' : habitacion.estado==1,
+									'text-success' : habitacion.estado==1 && !habitacion.tieneReserva,
 									'text-danger' : habitacion.estado==2,
 									'text-primary' : habitacion.estado==3,
-									'text-warning' : habitacion.estado==4,
+									'text-warning' : habitacion.estado==1 && habitacion.tieneReserva,
 								}"
 								>S/ {{parseFloat(habitacion.precioPublico).toFixed(2)}} </p>
 							</div>
 							<div class="col-12 col-md text-center">
 								<p class="fw-bold mb-0">
-									<img v-if="habitacion.estado == 1" src="@/assets/free.png" style="width: 32px;">
+									<img v-if="habitacion.estado == 1 && !habitacion.tieneReserva" src="@/assets/free.png" style="width: 32px;">
 									<img v-if="habitacion.estado == 2" src="@/assets/bussy.png" style="width: 32px;">
 									<img v-if="habitacion.estado == 3" src="@/assets/cleanning.png" style="width: 32px;">
-									<img v-if="habitacion.estado == 4" src="@/assets/reserved.png" style="width: 32px;">
+									<img v-if="habitacion.estado == 1 && habitacion.tieneReserva" src="@/assets/reserved.png" style="width: 32px;">
 								</p>
 							</div>
 						</div>
 						<div class=" text-end" id="pDescripcion">
-							<p v-if="habitacion.estado == 1" class="mb-0 text-success">Libre</p>
+							<p v-if="habitacion.estado == 1 && !habitacion.tieneReserva" class="mb-0 text-success">Libre</p>
 							<p v-if="habitacion.estado == 2" class="mb-0 text-danger">Ocupado</p>
 							<p v-if="habitacion.estado == 3" class="mb-0 text-primary">En limpieza</p>
-							<p v-if="habitacion.estado == 4" class="mb-0 text-warning">Reservado</p>
+							<p v-if="habitacion.estado == 1 && habitacion.tieneReserva" class="mb-0 text-warning">Reservación</p>
 						</div>
+						<p class="tieneReserva text-purple mb-0" v-if="habitacion.tieneReserva"><i class="bi bi-exclamation-diamond-fill"></i> Tiene reserva {{ habitacion.proxima }}</p>
 					</div>
 				</div>
 			</div>
@@ -89,6 +90,12 @@
 							</button>
 						</div>
 						<div class="col d-grid my-1">
+							<button class="btn btn-outline-light" @click="irA('reservado')">
+								<img src="@/assets/shake.png" style="width: 32px;">
+								<p class="mb-0 text-secondary">Ver reservación</p>
+							</button>
+						</div>
+						<div class="col d-grid my-1">
 							<button class="btn btn-outline-light" @click="irA('reservar')">
 								<img src="@/assets/reserved.png" style="width: 32px;">
 								<p class="mb-0 text-warning">Reservar</p>
@@ -109,6 +116,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 import modalNuevo from './ModalNuevo'
 export default{
 	data(){ return {
@@ -119,25 +127,40 @@ export default{
 	mounted() {
 		this.cargarDatos()
 		this.actualizar()
+		setInterval( ()=>{
+			this.actualizar()
+		}, 90000) //busca cada minuto y medio		
 	},
 	methods: {
-		async actualizar(){
+		actualizar(){
 			this.habitacionesPorPiso={};
 			let datos = new FormData()
 			datos.append('pedir', 'solicitar');
-			let serv = await fetch(this.servidor+'Habitaciones.php',{
+			fetch(this.servidor+'Habitaciones.php',{
 				method:'POST', body: datos
 			})
-			const temp = await serv.json()
-			this.habitaciones = temp.habitaciones
-			//separa las habitaciones por piso
-			for (const habitacion of this.habitaciones) {
-				const piso = habitacion.nivel;
-				if (!this.habitacionesPorPiso[piso] && piso !=0) {
-					this.habitacionesPorPiso[piso] = [];
+			.then(serv => serv.json() )
+			.then(temp => {
+				this.habitaciones = temp.habitaciones
+				this.reservaciones = temp.reservaciones
+				//separa las habitaciones por piso
+				for (const habitacion of this.habitaciones) {
+					const piso = habitacion.nivel;
+					if (!this.habitacionesPorPiso[piso] && piso !=0) {
+						this.habitacionesPorPiso[piso] = [];
+					}
+					let indice = this.reservaciones.findIndex(x=> x.idHabitacion == habitacion.id )
+					if(indice>-1){//encontró una reserva
+						habitacion.tieneReserva = true
+						habitacion.idReservado = this.reservaciones[indice].id
+						moment.locale('es')
+						habitacion.proxima = moment(this.reservaciones[indice].fechaInicio).fromNow()
+					}else{
+						habitacion.tieneReserva=false
+					}
+					this.habitacionesPorPiso[piso].push(habitacion);
 				}
-				this.habitacionesPorPiso[piso].push(habitacion);
-			}
+			})
 		},
 		async cargarDatos(){
 			let datos = new FormData()
@@ -170,6 +193,7 @@ export default{
 				case 'detalleHabitacion': this.$router.push({ name: 'detalleHabitacion', params:{idHabitacion: this.selecccionado.id }}); break;
 				case 'reservar': this.$router.push({ name: 'reservarHabitacion', params:{idHabitacion: this.selecccionado.id }}); break;
 				case 'editar': this.$router.push({ name: 'editarHabitacion', params:{idHabitacion: this.selecccionado.id }}); break;
+				case 'reservado': this.$router.push({ name: 'detalleReserva', params:{idReserva: this.selecccionado.idReservado }}); break;
 				default: break;
 			}
 		},
@@ -208,5 +232,8 @@ export default{
 	}
 	.text-purple{
 		color: #4400aa;
+	}
+	.tieneReserva{
+		font-size:0.85rem;
 	}
 </style>

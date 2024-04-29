@@ -7,6 +7,7 @@ switch($_POST['pedir']){
 	case 'solicitar': solicitar($datab); break;
 	case 'detalleHabitacion': detalleHabitacion($datab); break;
 	case 'detalleOcupado': detalleOcupado($datab); break;
+	case 'detalleReserva': detalleReserva($datab); break;
 	case 'cobrarHabitacion': cobrarHabitacion($datab); break;
 	case 'liberarLimpieza': liberarLimpieza($datab); break;
 	case 'actualizarHabitacion': actualizarHabitacion($datab); break;
@@ -43,7 +44,7 @@ function crear($db){
 
 function solicitar($db){
 	$piso=0; $pisos=[];
-	$filas = [];
+	$filas = []; $reservaciones=[];
 	$sql = $db->prepare("SELECT h.*, th.habitacion as tipoCuarto, e.estado as estadoCuarto  FROM `habitaciones` h
 	inner join estadoHabitacion e on e.id = h.estado
 	inner join tipoHabitacion th on th.id = h.tipo
@@ -56,7 +57,13 @@ function solicitar($db){
 				$piso =$rows['nivel'];
 			}
 		}
-		echo json_encode( array('habitaciones' => $filas, 'pisos' => $pisos, 'mensaje' => 'ok'));
+
+		//Futuras reservaciones
+		$sqlReservas=$db->prepare("SELECT * FROM `reservas` where fechaInicio between CONVERT_TZ(NOW(), @@session.time_zone, 'America/Chicago') - INTERVAL 1 hour and CONVERT_TZ(NOW(), @@session.time_zone, 'America/Chicago') + INTERVAL 3 hour and tipoReserva =2 and tipoAtencion = 2 and activo = 1;");
+		$sqlReservas->execute();
+		while($rowReservas  = $sqlReservas->fetch(PDO::FETCH_ASSOC))
+			$reservaciones[] = $rowReservas;
+		echo json_encode( array('habitaciones' => $filas, 'pisos' => $pisos, 'reservaciones'=>$reservaciones, 'mensaje' => 'ok'));
 	}
 }
 
@@ -80,6 +87,28 @@ function detalleOcupado($db){
 	inner join tipoHabitacion th on th.id = h.tipo
 	where idHabitacion = ? and r.estado = 2 limit 1;");
 	if($sql->execute([ $_POST['idHabitacion']])){
+		$fila = $sql->fetch(PDO::FETCH_ASSOC);
+		$sqlCliente =  $db->prepare("SELECT c.*, d.departamento from clientes c
+		inner join departamentos d on d.id = c.procedencia where c.id = ?;");
+		$sqlCliente->execute([$fila['idCliente']]);
+		$cliente = $sqlCliente->fetch(PDO::FETCH_ASSOC);
+		$sqlProductos = $db->prepare("SELECT pr.*, p.producto from productosReserva pr
+		inner join productos p on p.id = pr.idProducto
+		where idReservacion = ? and pr.activo = 1;");
+		$sqlProductos->execute([ $fila['id'] ]);
+		while($rowProductos = $sqlProductos->fetch(PDO::FETCH_ASSOC))
+			$productos[] = $rowProductos;
+	}
+	echo json_encode( array('habitacion' => $fila, 'cliente' => $cliente, 'productos'=>$productos, 'mensaje' => 'ok'));
+}
+
+function detalleReserva($db){
+	$fila = []; $cliente=[]; $productos=[];
+	$sql = $db->prepare("SELECT r.*, h.numero, h.detalle, th.habitacion as tipoCuarto FROM `reservas` r 
+	inner join habitaciones h on h.id = r.idHabitacion
+	inner join tipoHabitacion th on th.id = h.tipo
+	where r.id = ?;");
+	if($sql->execute([ $_POST['idReserva']])){
 		$fila = $sql->fetch(PDO::FETCH_ASSOC);
 		$sqlCliente =  $db->prepare("SELECT c.*, d.departamento from clientes c
 		inner join departamentos d on d.id = c.procedencia where c.id = ?;");
