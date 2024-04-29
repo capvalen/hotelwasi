@@ -32,10 +32,26 @@ const routes = [
 		name: 'detalleHabitacion',
 		component: () => import(/* webpackChunkName: "about" */ '../views/Habitaciones/DetalleHabitacion.vue')
 	},
+
+	{
+		path: '/habitacion/editar/:idHabitacion',
+		name: 'editarHabitacion',
+		component: () => import(/* webpackChunkName: "about" */ '../views/Habitaciones/EditarHabitacion.vue')
+	},
 	{
 		path: '/caja',
 		name: 'caja',
 		component: () => import(/* webpackChunkName: "about" */ '../views/Caja/HomeCaja.vue')
+	},
+	{
+		path: '/productos',
+		name: 'productos',
+		component: () => import(/* webpackChunkName: "about" */ '../views/Productos/HomeProductos.vue')
+	},
+	{
+		path: '/producto/:idProducto/movimientos-stock/year/:anio',
+		name: 'movimientosStock',
+		component: () => import(/* webpackChunkName: "about" */ '../views/Productos/Movimientos.vue')
 	},
 	{
 		path: '/clientes/nuevo',

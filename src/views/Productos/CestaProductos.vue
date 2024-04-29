@@ -24,7 +24,7 @@
 						<td>S/ {{parseFloat(producto.precio).toFixed(2)}}</td>
 						<td>
 							<div class="input-group mb-3">
-								<input type="number" class="form-control text-center" v-model="producto.cantidad" @change="botones.push(index)" @keypress.enter="actualizarCantidad(index)" min="1">
+								<input type="number" class="form-control text-center" v-model="producto.cantidad"  @focus="captura(producto.cantidad)" @change="botones.push(index)" @keypress.enter="actualizarCantidad(index)" min="1">
 								<button class="btn btn-outline-primary" v-show="botones.includes(index)" type="button" @click="actualizarCantidad(index)"><i class="bi bi-check2"></i></button>
 							</div>
 						</td>
@@ -51,7 +51,7 @@ export default{
 	name: 'CestaProductos',
 	props:['productos'],
 	data(){ return {
-		texto:'', botones:[]
+		texto:'', botones:[], antes:0
 	}},
 	methods: {
 		buscarProducto(){
@@ -66,9 +66,11 @@ export default{
 			let datos = new FormData()
 			datos.append('pedir', 'sumarProducto');
 			datos.append('id', this.productos[index].id);
+			datos.append('idProducto', this.productos[index].idProducto);
 			datos.append('idReservacion', this.productos[index].idReservacion);
 			datos.append('cantidad', this.productos[index].cantidad);
 			datos.append('total', this.sumaProductos);
+			datos.append('antes', this.antes);
 			fetch(this.servidor+'Productos.php',{
 				method:'POST', body: datos
 			})
@@ -90,6 +92,7 @@ export default{
 			let datos = new FormData()
 			datos.append('pedir', 'eliminar');
 			datos.append('id', this.productos[index].id);
+			datos.append('idProducto', this.productos[index].idProducto);
 			datos.append('idReservacion', this.productos[index].idReservacion);
 			datos.append('cantidad', this.productos[index].cantidad);
 			datos.append('precio', this.productos[index].precio);
@@ -108,7 +111,8 @@ export default{
 				}else
 					alertify.error('Hubo un error al actualizar')
 			})
-		}
+		},
+		captura(valor){ this.antes = valor}
 	},
 	computed: {
 		sumaProductos(){

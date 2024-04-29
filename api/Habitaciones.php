@@ -9,6 +9,7 @@ switch($_POST['pedir']){
 	case 'detalleOcupado': detalleOcupado($datab); break;
 	case 'cobrarHabitacion': cobrarHabitacion($datab); break;
 	case 'liberarLimpieza': liberarLimpieza($datab); break;
+	case 'actualizarHabitacion': actualizarHabitacion($datab); break;
 }
 
 function basicos($db){
@@ -133,6 +134,19 @@ function cobrarHabitacion($db){
 function liberarLimpieza($db){
 	$sql = $db->prepare("UPDATE habitaciones SET estado = 1 where id=?; ");
 	if($sql->execute([ $_POST['idHabitacion'] ])){
+		echo 'ok';
+	}else echo 'error';
+}
+
+function actualizarHabitacion($db){
+	$habitacion = json_decode($_POST['habitacion'], true);
+	$sql = $db->prepare("UPDATE habitaciones SET 
+	`tipo`=?,`numero`=?,`detalle`=?,`precioPublico`=?,`precioRebaja`=?,
+	`precioEspecial`=?,`nivel`=? where id=?;");
+	if($sql->execute([
+		$habitacion['tipo'], $habitacion['numero'], $habitacion['detalle'], $habitacion['precioPublico'], $habitacion['precioRebaja'],
+		$habitacion['precioEspecial'], $habitacion['nivel'], $habitacion['id']
+		])){
 		echo 'ok';
 	}else echo 'error';
 }

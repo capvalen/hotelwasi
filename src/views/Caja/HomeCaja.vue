@@ -1,6 +1,7 @@
 <template>
 	<div>
-		<h1>Caja</h1>
+		<p class="fs-2"><i class="bi bi-key"></i> Caja</p>
+
 		<div class="row justify-content-center" v-if="hayCaja">
 			<div class="col-md-6">
 				<div class="card">

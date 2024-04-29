@@ -1,6 +1,7 @@
 <template>
 	<div>
-		<h1>Habitaciones</h1>
+		<h1></h1>
+		<p class="fs-2"><i class="bi bi-key"></i> Habitaciones</p>
 
 		<div class=" mb-2">
 			<p class="mb-0"><i class="bi bi-funnel"></i> Filtros</p>
@@ -94,7 +95,7 @@
 							</button>
 						</div>
 						<div class="col my-1">
-							<button class="btn btn-outline-light">
+							<button class="btn btn-outline-light" @click="irA('editar')">
 								<img src="@/assets/edit.png" style="width: 32px;">
 								<p class="mb-0 text-purple">Editar habitación</p>
 							</button>
@@ -168,6 +169,7 @@ export default{
 				case 'inmediato': this.$router.push({ name: 'registrarHabitacion', params:{idHabitacion: this.selecccionado.id }}); break;
 				case 'detalleHabitacion': this.$router.push({ name: 'detalleHabitacion', params:{idHabitacion: this.selecccionado.id }}); break;
 				case 'reservar': this.$router.push({ name: 'reservarHabitacion', params:{idHabitacion: this.selecccionado.id }}); break;
+				case 'editar': this.$router.push({ name: 'editarHabitacion', params:{idHabitacion: this.selecccionado.id }}); break;
 				default: break;
 			}
 		},
