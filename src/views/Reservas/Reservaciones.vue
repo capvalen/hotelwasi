@@ -140,7 +140,6 @@
 					</div>
 				</div>
 			</div>
-		
 	</div>
 </template>
 <script>
@@ -150,7 +149,7 @@ export default{
 		habitacion:[], departamentos:[], activarDepartamento:true, reservado:{cliente:[]}, fechaAnterior:false, hoy: moment().format('YYYY-MM-DD'),
 		reserva:{
 			inicio: moment().format('YYYY-MM-DD'), horaInicio: moment().format('HH:mm'),
-			fin: moment().format('YYYY-MM-DD'), horaFin: moment().add(3, 'hours').format('HH:mm'), tipoAtencion:7, tipoReserva:1, idHabitacion: this.$route.params.idHabitacion, estado:1,
+			fin: moment().format('YYYY-MM-DD'), horaFin: moment().add(3, 'hours').format('HH:mm'), tipoReserva:1, tipoAtencion:7, idHabitacion: this.$route.params.idHabitacion, estado:2,
 			adelanto:0, pagar:0, parcial:0, precioAcordado:1,
 			cliente:{
 				id:1, dni: '00000000', nombres: 'Cliente simple', apellidos:'-', idNacionalidad:1, procedencia:1, direccion:'', celular:'', correo:'', observaciones:''
@@ -163,17 +162,17 @@ export default{
 	},
 	methods: {
 		async cargarDatos(){
-			if(this.$route.name == 'registrarHabitacion'){ //inmediato
+			if(this.$route.name == 'registrarHabitacion'){ 
 				this.reserva.tipoReserva=1
 				this.reserva.estado = 2
 				this.reserva.tipoAtencion = 7
 			}
-			else{ //reservación
+			if(this.$route.name == 'reservarHabitacion'){ //reservación
 				this.reserva.tipoReserva=2
 				this.reserva.estado = 1
 				this.reserva.tipoAtencion = 2
-
 			}
+			console.log(await this.reserva)
 			let datos = new FormData()
 			datos.append('pedir', 'detalleHabitacion');
 			datos.append('idHabitacion', this.$route.params.idHabitacion);
@@ -207,12 +206,12 @@ export default{
 			this.reserva.parcial = parcial;
 			if(parcial <= 0){
 				this.reserva.pagar=0;
-				this.reserva.tipoAtencion=7 //pago pendiente
+				this.reserva.tipoAtencion = this.reserva.tipoReserva==1 ? 7:2; //pago parcial sea el caso
 			}
 			else{
 				this.reserva.pagar = parcial - this.reserva.adelanto
-				this.reserva.tipoAtencion=7 //pago parcial
-				if( this.reserva.pagar == 0) this.reserva.tipoAtencion=6 //pagado
+				this.reserva.tipoAtencion = this.reserva.tipoReserva==1 ? 7:2; //pago parcial sea el caso
+				if( this.reserva.pagar == 0) this.reserva.tipoReserva==1 ? 6:3; //pagado
 			}
 		},
 		cambiarProdecencia(){

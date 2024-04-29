@@ -71,25 +71,25 @@
 				</div>
 				<div class="modal-body">
 					<div class="row row-cols-3">
-						<div class="col d-grid my-1" v-if="[2, 4].includes(selecccionado.estado)">
+						<div class="col d-grid my-1" v-if="[2, 4].includes(seleccionado.estado)">
 							<button class="btn btn-outline-light" @click="irA('detalleHabitacion')">
 								<img src="@/assets/bed.png" style="width: 32px;">
 								<p class="mb-0 text-secondary">Detalle de alquiler</p>
 							</button>
 						</div>
-						<div class="col d-grid  my-1" v-if="selecccionado.estado==1" @click="irA('inmediato')">
+						<div class="col d-grid  my-1" v-if="seleccionado.estado==1" @click="irA('inmediato')">
 							<button class="btn btn-outline-light" >
 								<img src="@/assets/bussy.png" style="width: 32px;">
 								<p class="mb-0 text-danger">Uso inmediato</p>
 							</button>
 						</div>
-						<div class="col d-grid my-1" v-if="selecccionado.estado==3" @click="liberarLimpieza()" data-bs-dismiss="modal">
+						<div class="col d-grid my-1" v-if="seleccionado.estado==3" @click="liberarLimpieza()" data-bs-dismiss="modal">
 							<button class="btn btn-outline-light">
 								<img src="@/assets/cleanning.png" style="width: 32px;">
 								<p class="mb-0 text-primary">Finalizar limpieza</p>
 							</button>
 						</div>
-						<div class="col d-grid my-1">
+						<div class="col d-grid my-1" v-show="seleccionado.tieneReserva">
 							<button class="btn btn-outline-light" @click="irA('reservado')">
 								<img src="@/assets/shake.png" style="width: 32px;">
 								<p class="mb-0 text-secondary">Ver reservación</p>
@@ -121,7 +121,7 @@ import modalNuevo from './ModalNuevo'
 export default{
 	data(){ return {
 		habitaciones:[], pisos:[], habitacionesPorPiso:{}, verFiltro:-1,
-		tipos:[], selecccionado:[]
+		tipos:[], seleccionado:[]
 	}},
 	components:{modalNuevo},
 	mounted() {
@@ -180,7 +180,7 @@ export default{
 			this.verFiltro = tipo;
 		},
 		modalQueHacer(index, nivel){
-			this.selecccionado = this.habitacionesPorPiso[nivel][index]
+			this.seleccionado = this.habitacionesPorPiso[nivel][index]
 			const modalQueHacer = new bootstrap.Modal(document.getElementById('modalQueHacer'))
 			modalQueHacer.show();
 		},
@@ -189,18 +189,18 @@ export default{
 			close.click()
 			
 			switch (tipo) {
-				case 'inmediato': this.$router.push({ name: 'registrarHabitacion', params:{idHabitacion: this.selecccionado.id }}); break;
-				case 'detalleHabitacion': this.$router.push({ name: 'detalleHabitacion', params:{idHabitacion: this.selecccionado.id }}); break;
-				case 'reservar': this.$router.push({ name: 'reservarHabitacion', params:{idHabitacion: this.selecccionado.id }}); break;
-				case 'editar': this.$router.push({ name: 'editarHabitacion', params:{idHabitacion: this.selecccionado.id }}); break;
-				case 'reservado': this.$router.push({ name: 'detalleReserva', params:{idReserva: this.selecccionado.idReservado }}); break;
+				case 'inmediato': this.$router.push({ name: 'registrarHabitacion', params:{idHabitacion: this.seleccionado.id }}); break;
+				case 'detalleHabitacion': this.$router.push({ name: 'detalleHabitacion', params:{idHabitacion: this.seleccionado.id }}); break;
+				case 'reservar': this.$router.push({ name: 'reservarHabitacion', params:{idHabitacion: this.seleccionado.id }}); break;
+				case 'editar': this.$router.push({ name: 'editarHabitacion', params:{idHabitacion: this.seleccionado.id }}); break;
+				case 'reservado': this.$router.push({ name: 'detalleReserva', params:{idReserva: this.seleccionado.idReservado }}); break;
 				default: break;
 			}
 		},
 		liberarLimpieza(){
 			let datos = new FormData()
 			datos.append('pedir', 'liberarLimpieza');
-			datos.append('idHabitacion', this.selecccionado.id);
+			datos.append('idHabitacion', this.seleccionado.id);
 			fetch(this.servidor+'Habitaciones.php',{
 				method:'POST', body: datos
 			}).then(serv => serv.text() )
