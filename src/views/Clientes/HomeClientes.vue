@@ -33,7 +33,7 @@
 			<tbody>
 				<tr v-for="(cliente, index) in clientes">
 					<td>{{ index+1 }}</td>
-					<td>{{ cliente.dni }}</td>
+					<td><router-link class="text-decoration-none" :to="'/cliente/detalle/'+cliente.id">{{ cliente.dni }}</router-link></td>
 					<td class="text-capitalize">{{ cliente.apellidos }} {{ cliente.nombres }}</td>
 					<td>{{ cliente.celular }}</td>
 					<td>{{ cliente.idNacionalidad == '1' ? 'Si': 'No' }}</td>

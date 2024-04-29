@@ -1,7 +1,8 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <h1>Bienvenido a Tambo Wasi</h1>
+    <h4>Software Hotelero</h4>
+    <p>Use e panel de la izquierda para administrar su negocio</p>
   </div>
 </template>
 

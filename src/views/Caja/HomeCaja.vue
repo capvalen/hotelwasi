@@ -207,6 +207,7 @@ export default {
 				if(det.tipo==1) suma += parseFloat(det.monto)
 				else suma -= parseFloat(det.monto)
 			});
+			suma = parseFloat(suma).toFixed(2)
 			this.caja.monto = suma
 			return suma
 		}

@@ -5,6 +5,7 @@ switch($_POST['pedir']){
 	case 'registrar': registrar($datab); break;
 	case 'verificarHorario': verificarHorario($datab); break;
 	case 'tomarHabitacion': tomarHabitacion($datab); break;
+	case 'filtrarReservaciones': filtrarReservaciones($datab); break;
 }
 
 function registrar($db){
@@ -116,4 +117,21 @@ function tomarHabitacion($db){
 	$sqlHabitacion = $db->prepare("UPDATE habitaciones set estado = 2 where id = ?;");
 	$sqlHabitacion->execute([ $_POST['idHabitacion'] ]);
 	echo json_encode( array('reserva' => 'ocupado'));
+}
+
+function filtrarReservaciones($db){
+	$filas = [];
+	$sql = $db->prepare("SELECT r.*, ta.atencion, e.estado as queEstado, h.numero, c.nombres, c.apellidos FROM `reservas` r
+	inner join tipoAtencion ta on ta.id = r.tipoAtencion
+	inner join estadoHabitacion e on e.id = r.estado
+	inner join habitaciones h on h.id = r.idHabitacion
+	inner join clientes c on c.id = r.idCliente
+	where tipoReserva = 2 and date_format(r.fechaInicio, '%Y-%m-%d') between ? and ? and r.activo = 1;");
+	$sql -> execute([
+		$_POST['inicio'], $_POST['fin']
+	]);
+	while($row = $sql->fetch(PDO::FETCH_ASSOC)){
+		$filas [] = $row;
+	}
+	echo json_encode( array('reservaciones' => $filas));
 }

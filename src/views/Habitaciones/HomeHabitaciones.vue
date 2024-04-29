@@ -89,7 +89,7 @@
 								<p class="mb-0 text-primary">Finalizar limpieza</p>
 							</button>
 						</div>
-						<div class="col d-grid my-1" v-show="seleccionado.tieneReserva">
+						<div class="col d-grid my-1" v-if="seleccionado.tieneReserva==true">
 							<button class="btn btn-outline-light" @click="irA('reservado')">
 								<img src="@/assets/shake.png" style="width: 32px;">
 								<p class="mb-0 text-secondary">Ver reservación</p>

@@ -59,7 +59,7 @@ function solicitar($db){
 		}
 
 		//Futuras reservaciones
-		$sqlReservas=$db->prepare("SELECT * FROM `reservas` where fechaInicio between CONVERT_TZ(NOW(), @@session.time_zone, 'America/Chicago') - INTERVAL 1 hour and CONVERT_TZ(NOW(), @@session.time_zone, 'America/Chicago') + INTERVAL 3 hour and tipoReserva =2 and tipoAtencion = 2 and activo = 1;");
+		$sqlReservas=$db->prepare("SELECT * FROM `reservas` where fechaInicio between CONVERT_TZ(NOW(), @@session.time_zone, 'America/Chicago') - INTERVAL 2 hour and CONVERT_TZ(NOW(), @@session.time_zone, 'America/Chicago') + INTERVAL 5 hour and tipoReserva =2 and tipoAtencion = 2 and activo = 1;");
 		$sqlReservas->execute();
 		while($rowReservas  = $sqlReservas->fetch(PDO::FETCH_ASSOC))
 			$reservaciones[] = $rowReservas;

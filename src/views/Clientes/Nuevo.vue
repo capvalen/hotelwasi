@@ -24,7 +24,7 @@
 						<option value="0">No</option>
 					</select>
 					<label for="">Procedencia</label>
-					<select class="form-select" id="sltDepartamentos">
+					<select class="form-select" id="sltDepartamentos" v-model="cliente.procedencia">
 						<option v-for="departamento in departamentos" :value="departamento.id">{{ departamento.departamento }}</option>
 					</select>
 					<label for="">Dato extra</label>

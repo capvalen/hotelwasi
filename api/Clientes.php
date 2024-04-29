@@ -7,6 +7,7 @@ switch($_POST['pedir']){
 	case 'actualizar': actualizar($datab); break;
 	case 'buscar': buscar($datab); break;
 	case 'buscarDNI': buscarDNI($datab); break;
+	case 'buscarPorID': buscarPorID($datab); break;
 	case 'eliminar': eliminar($datab); break;
 }
 
@@ -44,7 +45,7 @@ function listar($db){
 }
 
 function actualizar($db){
-	$cliente = $_POST['cliente'];
+	$cliente = json_decode($_POST['cliente'], true);
 	$sql = $db->prepare("UPDATE `clientes` SET 
 	`dni`=?,`nombres`=?,`apellidos`=?,`direccion`=?,`celular`=?,
 	`correo`=?,`idNacionalidad`=?,`procedencia`=?,`observaciones`=? WHERE `id`=?;");
@@ -78,6 +79,19 @@ function buscarDNI($db){
 	where c.activo = 1 and dni = ? limit 1;");
 	if($sql->execute([
 		$_POST['dni']
+	])){
+		$filas = $sql->fetch(PDO::FETCH_ASSOC);
+		echo json_encode( array('cliente' => $filas, 'mensaje' => 'ok'));
+	}
+}
+
+function buscarPorID($db){
+	$filas = [];
+	$sql = $db->prepare("SELECT c.*, d.departamento FROM `clientes` c
+	inner join departamentos d on d.id =  c.procedencia 
+	where c.id = ?;");
+	if($sql->execute([
+		$_POST['idCliente']
 	])){
 		$filas = $sql->fetch(PDO::FETCH_ASSOC);
 		echo json_encode( array('cliente' => $filas, 'mensaje' => 'ok'));
