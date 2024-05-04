@@ -68,14 +68,13 @@ export default {
 				datos.append('cliente', JSON.stringify(this.cliente))
 				this.axios.post(this.servidor + 'Clientes.php', datos)
 				.then(res =>{
-					if (res.data.id){
+					if (res.data.mensaje == 'ok'){
 						alertify.message('Guardado exitoso', 10);
 						this.$router.push({ name: 'clientes'});  //, params:{dniPadre: dni }
 					}
 				})
 			}
 		}
-
 	},
 }
 </script>

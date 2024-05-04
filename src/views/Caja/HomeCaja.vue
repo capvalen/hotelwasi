@@ -57,6 +57,7 @@
 					<th>Tipo</th>
 					<th>Monto</th>
 					<th>Moneda</th>
+					<th>@</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -66,6 +67,7 @@
 					<td>Apertura de caja</td>
 					<td></td>
 					<td class="text-primary">+{{parseFloat(cabecera.inicial ?? 0 ).toFixed(2)}}</td>
+					<td></td>
 					<td></td>
 				</tr>
 				<tr v-for="(detalle, index) in detalles">
@@ -81,6 +83,9 @@
 						<span v-else class="text-danger">-{{parseFloat(detalle.monto).toFixed(2)}}</span>
 					</td>
 					<td>{{ queMoneda(detalle.idMoneda-1) }}</td>
+					<td>
+						<button class="btn btn-outline-primary" title="Ticket" @click="irAticket(detalle.id)"><i class="bi bi-printer"></i></button>
+					</td>
 				</tr>
 			</tbody>
 			<tfoot>
@@ -230,14 +235,13 @@ export default {
 		queMoneda(idMoneda){
 			return this.monedas[idMoneda]
 		},
-		irCaja(){
-			this.$router.push('/caja')
+		irAticket(id){
+			window.open("https://intranet.tambowasi.com/api/printComprobante.php?idVenta="+id, "_blank");
 		},
 		irCaja2(){
 			this.caja.id
 			this.cargarDatos()
 			this.$router.push('/caja')
-
 		}
 	},
 	computed: {

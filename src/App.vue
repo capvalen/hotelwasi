@@ -10,7 +10,6 @@
 						<button class="btn btn-primary" data-bs-toggle="collapse" data-bs-target="#contraido" aria-expanded="false" aria-controls="contraido"><i class="bi bi-list"></i></button>
 					</div>
 				</div>
-				<p class="text-center text-body-secondary"><small><small>Versión 1.0</small></small></p>
 				<ul class="list-group list-group-flush collapse dont-collapse-sm " id="contraido">
 					<router-link to="/" class="list-group-item list-group-item-action" :class="{'active': botonActivo=='/'}"  @click="activarBoton('/')"><i class="bi bi-house"></i> Inicio</router-link>
 					<router-link :to="{name:'caja'}" class="list-group-item list-group-item-action" :class="{'active': botonActivo=='caja'}"  @click="activarBoton('caja')"><i class="bi bi-piggy-bank"></i> Caja</router-link>
@@ -21,6 +20,8 @@
 					<router-link to="/reportes" class="list-group-item list-group-item-action" :class="{'active': botonActivo=='reportes'}"  @click="activarBoton('reportes')"><i class="bi bi-luggage"></i> Reportes</router-link>
 					<li class="list-group-item list-group-item-action"><i class="bi bi-chat-dots"></i> Soporte</li>
 				</ul>
+				<p class="text-center text-body-secondary"><small><small>Versión del software 1.12</small></small></p>
+
 			</section>
 			<section class="col mt-4">
 				<router-view/>

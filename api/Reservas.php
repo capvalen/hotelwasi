@@ -66,6 +66,24 @@ function registrar($db){
 		$idReserva = $db->lastInsertId();
 		//echo $sqlReserva->debugDumpParams();
 
+		if(floatval($reserva['adelanto'])>0){
+
+			$sqlCaja = $db->query("SELECT * from caja where enUso=1;");
+			$sqlCaja->execute();
+			$rowCaja = $sqlCaja->fetch(PDO::FETCH_ASSOC);
+			$idCaja = $rowCaja['id'];
+
+			$descripcion = "Adelanto de alquiler: Habitación N° {$reserva['numero']} {$reserva['tipoCuarto']}";
+
+			$sqlDetalle = $db->prepare("INSERT INTO `cajaDetalle`(
+				`idCaja`, `descripcion`, `cantidad`, `monto`, `idReserva`, `idUsuario`, `fecha`) VALUES (
+				?, trim(?), 1, ?, ?, ?, CONVERT_TZ(NOW(), @@session.time_zone, 'America/Chicago')
+			)");
+			$sqlDetalle->execute([
+				$idCaja, $descripcion, $reserva['adelanto'], $idReserva, $reserva['idUsuario']
+			]);
+		}
+
 		if($reserva['estado']=='2'){
 			$sqlHabitacion = $db->prepare("UPDATE habitaciones set estado = ? where id = ?;");
 			$sqlHabitacion->execute([ $reserva['estado'], $reserva['idHabitacion'] ]);

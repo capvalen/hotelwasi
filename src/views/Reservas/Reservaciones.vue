@@ -154,7 +154,7 @@ export default{
 		reserva:{
 			inicio: moment().format('YYYY-MM-DD'), horaInicio: moment().format('HH:mm'),
 			fin: moment().format('YYYY-MM-DD'), horaFin: moment().add(3, 'hours').format('HH:mm'), tipoReserva:1, tipoAtencion:7, idHabitacion: this.$route.params.idHabitacion, estado:2,
-			adelanto:0, pagar:0, parcial:0, precioAcordado:1,
+			adelanto:0, pagar:0, parcial:0, precioAcordado:1, idUsuario: localStorage.getItem('idUsuario'), numero: -1,
 			cliente:{
 				id:1, dni: '00000000', nombres: 'Cliente simple', apellidos:'-', idNacionalidad:1, procedencia:1, direccion:'', celular:'', correo:'', observaciones:'', fechaNacimiento:null
 			}
@@ -186,6 +186,8 @@ export default{
 			const temp = await serv.json()
 			this.habitacion = temp.habitacion
 			this.reserva.parcial = this.habitacion.precioPublico
+			this.reserva.numero = this.habitacion.numero
+			this.reserva.tipoCuarto = this.habitacion.tipoCuarto
 
 			datos.set('pedir', 'listar')
 			
