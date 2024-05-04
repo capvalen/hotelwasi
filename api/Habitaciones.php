@@ -126,6 +126,8 @@ function detalleReserva($db){
 
 
 function cobrarHabitacion($db){
+	$pagos = json_decode($_POST['pagos'],true);
+
 	$sqlCaja = $db->query("SELECT * from caja where enUso=1;");
 	if($sqlCaja->execute()){
 		if($sqlCaja->rowCount() == 0)
@@ -134,16 +136,26 @@ function cobrarHabitacion($db){
 			$rowCaja = $sqlCaja->fetch(PDO::FETCH_ASSOC);
 			$idCaja = $rowCaja['id'];
 
-			$descripcion = "Alquiler de la habitación N° {$_POST['numero']} {$_POST['tipoCuarto']}";
+			$descripcion = "Alquiler: Habitación N° {$_POST['numero']} {$_POST['tipoCuarto']}";
 			if($_POST['cantidadProductos']>0) $descripcion .= " con {$_POST['cantidadProductos']} productos";
 
-			$sqlDetalle = $db->prepare("INSERT INTO `cajaDetalle`(
-				`idCaja`, `descripcion`, `cantidad`, `monto`, `idReserva`, `idUsuario`) VALUES (
-				?, trim(?), 1, ?, ?, ?
-			)");
-			$sqlDetalle->execute([
-				$idCaja, $descripcion, $_POST['total'], $_POST['idReserva'], $_POST['idUsuario']
-			]);
+			//ingresar por métodos de pago
+			foreach($pagos as $key => $value){ 
+				//echo "Clave: " . $key . ", Valor: " . $value . "<br>";
+				if($key == 'efectivo') $idMoneda = 1;
+				if($key == 'tarjeta') $idMoneda = 2;
+				if($key == 'yape') $idMoneda = 3;
+				if($key == 'plin') $idMoneda = 4;
+				if($value <>'' && $value>0){
+					$sqlDetalle = $db->prepare("INSERT INTO `cajaDetalle`(
+						`idCaja`, `descripcion`, `cantidad`, `monto`, `idReserva`, `idUsuario`, `idMoneda`, `fecha`) VALUES (
+						?, trim(?), 1, ?, ?, ?, ?, CONVERT_TZ(NOW(), @@session.time_zone, 'America/Chicago')
+					)");
+					$sqlDetalle->execute([
+						$idCaja, $descripcion, $value, $_POST['idReserva'], $_POST['idUsuario'], $idMoneda
+					]);
+				}
+			}
 
 			$sqlRegistro=$db->prepare("UPDATE registro SET tipoAtencion = 6, estado = 5 WHERE idReserva = ?;");
 			$sqlRegistro ->execute([ $_POST['idReserva'] ]);

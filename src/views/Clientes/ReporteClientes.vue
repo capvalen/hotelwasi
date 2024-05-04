@@ -13,6 +13,8 @@
 			<input type="text" class="form-control" v-model="cliente.direccion">
 			<label for="">Celular</label>
 			<input type="text" class="form-control" v-model="cliente.celular">
+			<label for="">Fecha de nacimiento</label>
+			<input type="date" class="form-control" v-model="cliente.fechaNacimiento">
 			<label for="">Correo</label>
 			<input type="text" class="form-control" v-model="cliente.correo">
 			<label for="">Nacionalidad <span class="text-danger">*</span></label>

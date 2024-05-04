@@ -13,7 +13,7 @@
 				<p class="text-center text-body-secondary"><small><small>Versión 1.0</small></small></p>
 				<ul class="list-group list-group-flush collapse dont-collapse-sm " id="contraido">
 					<router-link to="/" class="list-group-item list-group-item-action" :class="{'active': botonActivo=='/'}"  @click="activarBoton('/')"><i class="bi bi-house"></i> Inicio</router-link>
-					<router-link to="/caja" class="list-group-item list-group-item-action" :class="{'active': botonActivo=='caja'}"  @click="activarBoton('caja')"><i class="bi bi-piggy-bank"></i> Caja</router-link>
+					<router-link :to="{name:'caja'}" class="list-group-item list-group-item-action" :class="{'active': botonActivo=='caja'}"  @click="activarBoton('caja')"><i class="bi bi-piggy-bank"></i> Caja</router-link>
 					<router-link to="/reservas" class="list-group-item list-group-item-action" :class="{'active': botonActivo=='reservas'}"  @click="activarBoton('reservas')"><i class="bi bi-lamp-fill"></i> Reservas</router-link>
 					<router-link to="/habitaciones" class="list-group-item list-group-item-action" :class="{'active': botonActivo=='habitaciones'}"  @click="activarBoton('habitaciones')"><i class="bi bi-key-fill"></i> Habitaciones</router-link>
 					<router-link to="/clientes" class="list-group-item list-group-item-action" :class="{'active': botonActivo=='clientes'}"  @click="activarBoton('clientes')"><i class="bi bi-person-workspace"></i> Clientes</router-link>
@@ -40,6 +40,7 @@ export default{
   },
 	mounted(){
 		localStorage.setItem('idUsuario', 1)
+		console.log('muestra');
 	},
   methods: {
     activarBoton(boton) {

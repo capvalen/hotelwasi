@@ -24,6 +24,7 @@
 					<th>N°</th>
 					<th>DNI</th>
 					<th>Apellidos y Nombres</th>
+					<th>F. Nacimiento</th>
 					<th>Celular</th>
 					<th>Peruano</th>
 					<th>Procedencia</th>
@@ -35,6 +36,7 @@
 					<td>{{ index+1 }}</td>
 					<td><router-link class="text-decoration-none" :to="'/cliente/detalle/'+cliente.id">{{ cliente.dni }}</router-link></td>
 					<td class="text-capitalize">{{ cliente.apellidos }} {{ cliente.nombres }}</td>
+					<td>{{ fechaLatam(cliente.fechaNacimiento) }}</td>
 					<td>{{ cliente.celular }}</td>
 					<td>{{ cliente.idNacionalidad == '1' ? 'Si': 'No' }}</td>
 					<td>{{ cliente.idNacionalidad == '2' ? '': cliente.departamento }}</td>
@@ -48,6 +50,7 @@
 	</div>
 </template>
 <script>
+import moment from 'moment'
 export default{
 	data(){ return{
 		clientes:[], texto:''
@@ -76,6 +79,9 @@ export default{
 				.then(resp => resp.json() )
 				.then(data => this.cargarDatos() )
 			}
+		},
+		fechaLatam(hora){
+			if(hora) return moment(hora, 'YYYY-MM-DD').format('DD/MM/YYYY')
 		},
 		buscar(){
 			if(this.texto == '') this.cargarDatos()

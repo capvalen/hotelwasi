@@ -22,12 +22,12 @@ function registrar($db){
 			$campo = $cliente; //copiado de Clientes->crear();
 			$sql = $db->prepare("INSERT INTO `clientes`(
 				`dni`, `nombres`, `apellidos`, `direccion`, `celular`,
-				`correo`, `idNacionalidad`, `procedencia`, `observaciones`) VALUES
+				`correo`, `idNacionalidad`, `procedencia`, `observaciones`, `fechaNacimiento`) VALUES
 				(?, ?, ?, ?, ?,
-				?, ?, ?, ?)");
+				?, ?, ?, ?, ?)");
 			if($sql->execute([
 				$campo['dni'], $campo['nombres'], $campo['apellidos'], $campo['direccion'], $campo['celular'],
-				$campo['correo'], $campo['idNacionalidad'], $campo['procedencia'], $campo['observaciones']
+				$campo['correo'], $campo['idNacionalidad'], $campo['procedencia'], $campo['observaciones'], $campo['fechaNacimiento']
 				])){
 				$idCliente = $db->lastInsertId();
 			}else{
@@ -36,10 +36,11 @@ function registrar($db){
 		}else{
 			$sql = $db->prepare("UPDATE `clientes` SET 
 			`nombres`=?,`apellidos`=?,`direccion`=?,`celular`=?,
-			`correo`=?,`idNacionalidad`=?,`procedencia`=?,`observaciones`=? WHERE `dni`=?;");
+			`correo`=?,`idNacionalidad`=?,`procedencia`=?,`observaciones`=?, fechaNacimiento = ? WHERE `dni`=?;");
 			if($sql->execute([
 				$cliente['nombres'], $cliente['apellidos'], $cliente['direccion'], $cliente['celular'], 
-				$cliente['correo'], $cliente['idNacionalidad'], $cliente['procedencia'], $cliente['observaciones'], $cliente['dni']
+				$cliente['correo'], $cliente['idNacionalidad'], $cliente['procedencia'], $cliente['observaciones'], 
+				$cliente['fechaNacimiento'], $cliente['dni']
 			])){
 				$idCliente = $cliente['id'];
 			}

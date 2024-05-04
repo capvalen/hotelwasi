@@ -13,11 +13,22 @@
 				</div>
 			</div>
 		</div>
-		<div class="row" v-if="hayCaja">
-			<div class="col-6 d-grid gap-2 d-md-flex justify-content-between">
+		<div class="row" v-if="hayCaja && cabecera.enUso==1">
+			<div class="col-12 d-grid gap-2 d-md-flex justify-content-between">
 				<button class="btn btn-outline-danger  mt-2 " data-bs-toggle="modal" data-bs-target="#modalEgreso" v-if="verBoton" @click="caja.monto=0"><i class="bi bi-cart-dash"></i> Registrar egreso</button>
 
+				<button class="btn btn-outline-success mt-2 " v-if="verBoton" @click="cargarDatos()"><i class="bi bi-arrow-clockwise"></i> Actualizar</button>
 				<button class="btn btn-outline-primary mt-2 " data-bs-toggle="modal" data-bs-target="#modalCaja" v-if="verBoton"><i class="bi bi-piggy-bank"></i> Cerrar caja</button>
+			</div>
+		</div>
+		<div class="row" v-if="cabecera.enUso==0">
+			<div class="col-12">
+				<button class="btn btn-outline-secondary" @click="irCaja2()"><i class="bi bi-piggy-bank"></i> Ver caja actual</button>
+			</div>
+		</div>
+		<div class="row" v-if="!verBoton">
+			<div class="col-12">
+				<button class="btn btn-outline-secondary" @click="irCaja2()"><i class="bi bi-piggy-bank"></i> Abrir nueva caja</button>
 			</div>
 		</div>
 
@@ -37,26 +48,29 @@
 		</div>
 		
 		
-		<table class="table table-hover container mt-3" >
+		<table class="table table-hover container-fluid mt-3" v-if="hayCaja">
 			<thead>
 				<tr>
 					<th>N°</th>
+					<th>Hora</th>
 					<th>Detalle</th>
 					<th>Tipo</th>
 					<th>Monto</th>
-					<th>Obs.</th>
+					<th>Moneda</th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr>
 					<td>1</td>
+					<td>{{ horaLatam(cabecera.apertura) }}</td>
 					<td>Apertura de caja</td>
 					<td></td>
-					<td class="text-primary">+{{parseFloat(cabecera.inicial).toFixed(2)}}</td>
+					<td class="text-primary">+{{parseFloat(cabecera.inicial ?? 0 ).toFixed(2)}}</td>
 					<td></td>
 				</tr>
 				<tr v-for="(detalle, index) in detalles">
 					<td>{{ index+2 }}</td>
+					<td>{{ horaLatam(detalle.fecha) }}</td>
 					<td class="text-capitalize">{{ detalle.descripcion }}</td>
 					<td>
 						<span v-if="detalle.tipo==1">Ingreso</span>
@@ -66,15 +80,21 @@
 						<span v-if="detalle.tipo==1" class="text-primary">+{{parseFloat(detalle.monto).toFixed(2)}}</span>
 						<span v-else class="text-danger">-{{parseFloat(detalle.monto).toFixed(2)}}</span>
 					</td>
-					<td></td>
+					<td>{{ queMoneda(detalle.idMoneda-1) }}</td>
 				</tr>
 			</tbody>
 			<tfoot>
-				<td colspan="3" class="text-end pe-3">Total</td>
-				<td class="fw-bold">S/ {{ parseFloat(sumaTotal).toFixed(2) }}</td>
+				<tr>
+					<td colspan="4" class="text-end pe-3">Total</td>
+					<td class="fw-bold">S/ {{ parseFloat(sumaTotal).toFixed(2) }}</td>
+				</tr>
+				<tr v-if="cabecera.enUso==0">
+					<td colspan="4" class="text-end pe-3">Se cerró con: </td>
+					<td class="fw-bold">S/ {{ parseFloat(cabecera.final).toFixed(2) }}</td>
+				</tr>
+
 			</tfoot>
 		</table>
-		
 	</div>
 	<!-- Modal -->
 	<div class="modal fade" id="modalCaja" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -120,15 +140,21 @@
 import moment from 'moment'
 export default {
 	data(){return {
-		caja:{monto:0, detalle:''}, cabecera:[], detalles:[], verBoton:true, hayCaja:false
+		caja:{monto:0, detalle:'', id:-1}, cabecera:[], detalles:[], verBoton:true, hayCaja:false,
+		monedas:['Efectivo', 'Tarjeta', 'Yape', 'Plin']
 	}},
 	mounted(){
+		console.log('cambio');
+		if(this.$route.name == 'detalleCaja'){
+			this.caja.id = this.$route.params.idCaja
+		}else this.caja.id=-1
 		this.cargarDatos()
 	},
 	methods: {
 		async cargarDatos(){
 			let datos = new FormData()
 			datos.append('pedir', 'detalleCaja'); //de la caja activa
+			datos.append('idCaja', this.caja.id); //de la caja activa
 			let serv = await fetch(this.servidor+'Caja.php',{
 				method:'POST', body: datos
 			})
@@ -180,6 +206,9 @@ export default {
 				this.hayCaja=false
 			}
 		},
+		horaLatam(hora){
+			if(hora) return moment(hora, 'YYYY-MM-DD HH:mm').format('h:mm a')
+		},
 		async crearEgreso(){
 			if(this.caja.monto<0) alertify.error('No se puede ingresar montos en 0')
 			else{
@@ -197,6 +226,18 @@ export default {
 					this.cargarDatos()
 				}else alertify.error('Hubo un error')
 			}
+		},
+		queMoneda(idMoneda){
+			return this.monedas[idMoneda]
+		},
+		irCaja(){
+			this.$router.push('/caja')
+		},
+		irCaja2(){
+			this.caja.id
+			this.cargarDatos()
+			this.$router.push('/caja')
+
 		}
 	},
 	computed: {
@@ -210,7 +251,7 @@ export default {
 			suma = parseFloat(suma).toFixed(2)
 			this.caja.monto = suma
 			return suma
-		}
+		},
 	},
 }
 </script>

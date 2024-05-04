@@ -40,22 +40,7 @@
 								<label for="">Hora de salida</label>
 								<p class="mb-0">{{horaLatam(habitacion.fechaFin)}}</p>
 							</div>
-							<div class="col">
-								<label for="">Precio de la habitación</label>
-								<p class="mb-0">S/ {{parseFloat(habitacion.precio).toFixed(2)}}</p>
-							</div>
-							<div class="col">
-								<label for="">Productos</label>
-								<p class="mb-0">S/ {{parseFloat(habitacion.productos).toFixed(2)}}</p>
-							</div>
-							<div class="col">
-								<label for="">Adelanto</label>
-								<p class="mb-0">S/ {{parseFloat(habitacion.adelanto).toFixed(2)}}</p>
-							</div>
-							<div class="col">
-								<label for="">A cuenta:</label>
-								<p class="mb-0 fs-3">S/ {{parseFloat(habitacion.pagar + habitacion.productos).toFixed(2)}}</p>
-							</div>
+							
 						</div>
 					</div>
 				</div>
@@ -73,6 +58,10 @@
 								<p class="mb-0">{{cliente.apellidos}} {{ cliente.nombres }}</p>
 							</div>
 							<div class="col">
+								<label for="">Fecha de nacimiento</label>
+								<p class="mb-0">{{fechaLatam(cliente.fechaNacimiento) ?? '-'}}</p>
+							</div>
+							<div class="col">
 								<label for="">Procedencia</label>
 								<p class="mb-0" v-if="cliente.idNacionalidad==1">Peruano - {{ cliente.departamento }}</p>
 								<p class="mb-0" v-else>Extranjero</p>
@@ -86,6 +75,49 @@
 				</div>
 				
 				<CestaProductos v-if="$route.name == 'detalleHabitacion'" :productos="cesta" @buscarProducto="buscarProducto" @actualizarPrecioProductos="actualizarPrecioProductos"></CestaProductos>
+
+				<div class="card my-2">
+					<div class="card-body">
+						<h5 class="card-title ">Cobro del servicio</h5>
+						<div class="row row-cols-12 row-cols-lg-4">
+							<div class="col">
+								<label for="">Precio de la habitación</label>
+								<p class="mb-0">S/ {{parseFloat(habitacion.precio).toFixed(2)}}</p>
+							</div>
+							<div class="col">
+								<label for="">Productos</label>
+								<p class="mb-0">S/ {{parseFloat(habitacion.productos).toFixed(2)}}</p>
+							</div>
+							<div class="col">
+								<label for="">Adelanto</label>
+								<p class="mb-0">S/ {{parseFloat(habitacion.adelanto).toFixed(2)}}</p>
+							</div>
+							<div class="col">
+								<label for="">A cuenta:</label>
+								<p class="mb-0 fs-3">S/ {{parseFloat(habitacion.pagar + habitacion.productos).toFixed(2)}}</p>
+							</div>
+						</div>
+						<h5 class="card-title ">Métodos de pago</h5>
+						<div class="row row-cols-12 row-cols-lg-4">
+							<div class="col">
+								<label class="mt-0" for="">Efectivo</label>
+								<input type="number" class="form-control" min="0" @focus="handleFocus" v-model="pago.efectivo">
+							</div>
+							<div class="col">
+								<label class="mt-0" for="">Tarjeta</label>
+								<input type="number" class="form-control" min="0" @focus="handleFocus" v-model="pago.tarjeta">
+							</div>
+							<div class="col">
+								<label class="mt-0" for="">Yape</label>
+								<input type="number" class="form-control" min="0" @focus="handleFocus" v-model="pago.yape">
+							</div>
+							<div class="col">
+								<label class="mt-0" for="">Plin</label>
+								<input type="number" class="form-control" min="0" @focus="handleFocus" v-model="pago.plin">
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 
 			<div class="row my-3">
@@ -108,6 +140,7 @@ export default{
 		cliente:{
 			id:1, dni: '00000000', nombres: 'Cliente simple', apellidos:'', idNacionalidad:1, procedencia:1, direccion:'', celular:'', correo:'', observaciones:''
 		},
+		pago:{efectivo:0, tarjeta:0, yape:0, plin:0}
 	}},
 	components:{ModalBuscarProducto, CestaProductos},
 	mounted(){
@@ -167,13 +200,23 @@ export default{
 			this.habitacion.productos = total
 		},
 		cobrar(){
-			let that = this
-			alertify.confirm('Cobrar servicio','¿Desea finalizar el alquiler de habitación?',
-				function(){ 
-					that.pagar()
-				},
-				function(){ console.log('no') }
-			);
+
+			this.pago.efectivo = this.pago.efectivo<0? 0: this.pago.efectivo
+			this.pago.tarjeta = this.pago.tarjeta<0? 0: this.pago.tarjeta
+			this.pago.yape = this.pago.yape<0? 0: this.pago.yape
+			this.pago.plin = this.pago.plin<0? 0: this.pago.plin
+
+			if(this.debeCliente){
+				alertify.error('El monto ingresado no cubre la deuda.')
+			}else{
+				let that = this
+				alertify.confirm('Cobrar servicio','¿Desea finalizar el alquiler de habitación?',
+					function(){ 
+						that.pagar()
+					},
+					function(){ /* console.log('no') */ }
+				).set('labels', {ok:'Sí, finalizar', cancel:'No'}); ;
+			}
 		},
 		pagar(){
 			let pendiente = this.habitacion.precio + this.habitacion.productos
@@ -188,6 +231,7 @@ export default{
 			datos.append('cantidadProductos',this.cesta.length );
 			datos.append('numero',this.habitacion.numero );
 			datos.append('tipoCuarto',this.habitacion.tipoCuarto );
+			datos.append('pagos', JSON.stringify(this.pago) );
 			fetch(this.servidor+'Habitaciones.php',{
 				method:'POST', body: datos
 			}).then(serv=> serv.json())
@@ -229,8 +273,23 @@ export default{
 					alertify.error('Hubo un error')
 				}
 			})
+		},
+		handleFocus(event){
+			event.target.select()
 		}
 	},
+	computed:{
+		debeCliente(){
+			let debe = parseFloat(this.habitacion.pagar + this.habitacion.productos) //55
+			let paga = 0 //54
+			
+			paga += this.pago.efectivo <0 ? 0: this.pago.efectivo
+			paga += this.pago.tarjeta <0 ? 0: this.pago.tarjeta
+			paga += this.pago.yape <0 ? 0: this.pago.yape
+			paga += this.pago.plin <0 ? 0: this.pago.plin
+			return (debe > paga)? true: false
+		}
+	}
 }
 </script>
 

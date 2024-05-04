@@ -16,12 +16,12 @@ function crear($db){
 	$campo = json_decode($_POST['cliente'], true);
 	$sql = $db->prepare("INSERT INTO `clientes`(
 		`dni`, `nombres`, `apellidos`, `direccion`, `celular`,
-		`correo`, `idNacionalidad`, `procedencia`, `observaciones`) VALUES
+		`correo`, `idNacionalidad`, `procedencia`, `observaciones`, `fechaNacimiento`) VALUES
 		(?, ?, ?, ?, ?,
-		?, ?, ?, ?)");
+		?, ?, ?, ?, ?)");
 	if($sql->execute([
 		$campo['dni'], $campo['nombres'], $campo['apellidos'], $campo['direccion'], $campo['celular'],
-		$campo['correo'], $campo['idNacionalidad'], $campo['procedencia'], $campo['observaciones']
+		$campo['correo'], $campo['idNacionalidad'], $campo['procedencia'], $campo['observaciones'], $campo['fechaNacimiento']
 		])){
 		$idNuevo = $db->lastInsertId();
 		

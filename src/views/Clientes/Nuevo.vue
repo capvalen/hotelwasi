@@ -11,13 +11,15 @@
 					<label >D.N.I. <span class="text-danger">*</span></label>
 					<input type="text" class="form-control" autocomplete="off" v-model="cliente.dni">
 					<label >Apellidos <span class="text-danger">*</span></label>
-					<input type="text" class="form-control" autocomplete="off" v-model="cliente.apellidos">
+					<input type="text" class="form-control text-capitalize" autocomplete="off" v-model="cliente.apellidos">
 					<label >Nombres <span class="text-danger">*</span></label>
-					<input type="text" class="form-control" autocomplete="off" v-model="cliente.nombres">
+					<input type="text" class="form-control text-capitalize" autocomplete="off" v-model="cliente.nombres">
 					<label >Dirección</label>
 					<input type="text" class="form-control" autocomplete="off" v-model="cliente.direccion">
 					<label >Celular</label>	
 					<input type="text" class="form-control" autocomplete="off" v-model="cliente.celular">
+					<label >Fecha de nacimiento</label>	
+					<input type="date" class="form-control" v-model="cliente.fechaNacimiento">
 					<label >¿Nacionalidad Peruana?</label>
 					<select class="form-select" id="sltNacionalidad" v-model="cliente.idNacionalidad">
 						<option value="1">Si</option>
@@ -39,7 +41,7 @@
 export default{
 	data(){ return {
 		cliente:{
-			dni:'', apellidos:'', nombres:'', direccion:'', celular:'', idNacionalidad:1, procedencia:1, observaciones:''
+			dni:'', apellidos:'', nombres:'', direccion:'', celular:'', idNacionalidad:1, procedencia:1, observaciones:'', fechaNacimiento:null
 		}, departamentos:[]
 	}},
 	mounted() {

@@ -93,7 +93,7 @@
 						<h5 class="card-title">Detalle del cliente</h5>
 						<div class="row row-cols-md-2">
 							<div class="col">
-								<label for="">DNI del Cliente  <router-link class="badge text-bg-primary puntero" to="/clientes/nuevo" target="_blank"><i class="bi bi-plus-lg"></i></router-link></label>
+								<label for="">DNI del Cliente </label>
 								<div class="input-group ">
 									<input type="text" class="form-control" v-model="reserva.cliente.dni" @blur="buscarDNI()" @keypress.enter = "buscarDNI()">
 									<button class="btn btn-outline-secondary" type="button" @click="buscarDNI()"><i class="bi bi-search"></i></button>
@@ -113,6 +113,10 @@
 							<div class="col">
 								<label for="">Nombres</label>
 								<input type="text" class="form-control text-capitalize" v-model="reserva.cliente.nombres">
+							</div>
+							<div class="col">
+								<label for="">Fecha de nacimiento</label>
+								<input type="date" class="form-control" v-model="reserva.cliente.fechaNacimiento">
 							</div>
 							<div class="col">
 								<label for="">Procedencia</label>
@@ -152,7 +156,7 @@ export default{
 			fin: moment().format('YYYY-MM-DD'), horaFin: moment().add(3, 'hours').format('HH:mm'), tipoReserva:1, tipoAtencion:7, idHabitacion: this.$route.params.idHabitacion, estado:2,
 			adelanto:0, pagar:0, parcial:0, precioAcordado:1,
 			cliente:{
-				id:1, dni: '00000000', nombres: 'Cliente simple', apellidos:'-', idNacionalidad:1, procedencia:1, direccion:'', celular:'', correo:'', observaciones:''
+				id:1, dni: '00000000', nombres: 'Cliente simple', apellidos:'-', idNacionalidad:1, procedencia:1, direccion:'', celular:'', correo:'', observaciones:'', fechaNacimiento:null
 			}
 		}
 	}},

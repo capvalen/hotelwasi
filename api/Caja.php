@@ -10,8 +10,10 @@ switch($_POST['pedir']){
 
 
 function detalleCaja($db){
-	$filas = []; $detalles = [];
-	$sql = $db->query("SELECT * FROM caja where enUso =1 and activo = 1 limit 1;");
+	$filas = []; $detalles = []; $filtro = '';
+	if($_POST['idCaja']<>-1) $filtro = " and id = ".$_POST['idCaja']; //busca caj con id
+	else $filtro =  " and enUso =1 "; //busca la caja abierta
+	$sql = $db->query("SELECT * FROM caja where activo = 1 {$filtro} limit 1;");
 	if($sql->execute()){
 		if($sql->rowCount() == 0){
 			echo json_encode( array('caja' => 'noCaja', 'cabecera' => $filas, 'detalles' => $detalles ));
@@ -30,7 +32,7 @@ function detalleCaja($db){
 function abrir($db){
 	$sql = $db->prepare("INSERT INTO `caja`(`apertura`, `inicial`, `idUsuario`) VALUES (?, ?, ?)");
 	$sql->execute([ $_POST['apertura'], $_POST['monto'], $_POST['idUsuario']]);
-	//$idCaja = $db->lastInsertId();
+	$_POST['idCaja'] = $db->lastInsertId();
 	detalleCaja($db);
 }
 
@@ -58,7 +60,7 @@ function salida($db){
 
 			$sqlDetalle = $db->prepare("INSERT INTO `cajaDetalle`(
 				`idCaja`, `descripcion`, `cantidad`, `monto`, `idReserva`, `idUsuario`, `tipo`) VALUES (
-				?, trim(?), 1, ?, ?, ?, 2
+				?, trim(?), 1, ?, ?, ?, detalleCaja2
 			)");
 			$sqlDetalle->execute([
 				$idCaja, $_POST['detalle'], $_POST['monto'], -1, $_POST['idUsuario']
